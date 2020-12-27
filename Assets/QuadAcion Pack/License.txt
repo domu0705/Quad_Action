@@ -1,0 +1,21 @@
+QuadAction Assets Pack (by Goldmetal)
+
+1.
+해당 에셋은 골드메탈 유니티 강좌-쿼드뷰 액션 게임 예제를
+따라하실 수 있도록 제공하는 에셋입니다.
+
+2.
+강좌 외에도 개인 학습용, 비상업적용으로 사용 가능하나
+공개 프로젝트시 출저는 밝혀주시기 바랍니다.
+(상업적 사용 불가능)
+
+3.
+2번 사항에 해당하는 경우
+에셋을 부분적으로 수정하여 사용하실 수 있습니다.
+
+#.
+골드메탈 블로그 : https://blog.naver.com/gold_metal
+골드메탈 유튜브 : https://www.youtube.com/user/GoldmetalYT
+
+Copyright 2020(C) Goldmetal All Right Reserved.
+   
