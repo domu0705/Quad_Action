@@ -27,10 +27,13 @@ public class Player : MonoBehaviour
 
     bool wDown;//walk down
     bool jDown;//jump down
+    bool fDown; //공격 키
     bool iDown;//무기 입수
     bool isJump; //jump중인지를 확인
     bool isDodge; //Dodge중인지를 확인
     bool isSwap; //현재 swap중인지를 확인
+    bool isFireReady = true;//공격 준비 됐는지
+
     bool sDown1; //무기 1번
     bool sDown2; //무기 2번
     bool sDown3; //무기 3번
@@ -41,9 +44,10 @@ public class Player : MonoBehaviour
     Rigidbody rigid;
 
     GameObject nearObject;
-    GameObject equipWeapon;//현재 장착중인 무기
+    Weapon equipWeapon;//현재 장착중인 무기
 
     int equipWeaponIndex = -1; // 현재 들고있는 무기 (이건 숫자로)
+    float fireDelay; //공격 딜레이
     void Awake ()
     {
         rigid = GetComponent<Rigidbody>();
@@ -57,6 +61,7 @@ public class Player : MonoBehaviour
         Move();
         Turn();
         Jump();
+        Attack();
         Dodge();
         Interaction();
         Swap();
@@ -66,6 +71,7 @@ public class Player : MonoBehaviour
         vAxis = Input.GetAxisRaw("Vertical"); // horizontal, vertical 은 edit>project settings에서 있음.
         wDown = Input.GetButton("Walk");
         jDown = Input.GetButtonDown("Jump");
+        fDown = Input.GetButtonDown("Fire1"); //마우스 왼쪽
         iDown = Input.GetButtonDown("interaction");
         sDown1 = Input.GetButtonDown("Swap1");
         sDown2 = Input.GetButtonDown("Swap2");
@@ -80,7 +86,7 @@ public class Player : MonoBehaviour
         {
             moveVec = dodgeVec;
         }
-        if (isSwap)
+        if (isSwap || !isFireReady) // isSwap이나 망치를 휘두르는 중(이때는 ready가 false)에는 멈춤
             moveVec = Vector3.zero;
         transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
 
@@ -89,6 +95,19 @@ public class Player : MonoBehaviour
 
     }
 
+    void Attack()
+    {
+        if (equipWeapon == null)
+            return;
+        fireDelay += Time.deltaTime;
+        isFireReady = equipWeapon.rate < fireDelay; // 공격을 이미 해서 공격 모션이 이루어지는 동안은 기다려야 함.
+        if(fDown && isFireReady && !isDodge && !isSwap)//공격!
+        {
+            equipWeapon.Use();
+            anim.SetTrigger("doSwing");
+            fireDelay = 0;
+        }
+    }
     void Turn()
     {
         transform.LookAt(transform.position + moveVec);
@@ -123,6 +142,7 @@ public class Player : MonoBehaviour
         speed *= 0.5f;
         isDodge = false;
     }
+
     void Swap()
     {
         if (sDown1 && ((!hasWeapons[0]) || equipWeaponIndex == 0))// 무기가 없는데 바꾸려고하거나 들고있는 무긴데 그걸로 또 바꾸러고 하면 안함.
@@ -139,8 +159,8 @@ public class Player : MonoBehaviour
         if ((sDown1 || sDown2 || sDown3) && !isJump && !isDodge)
         {
             if(equipWeapon != null)
-                equipWeapon.SetActive(false);
-            equipWeapon = weapons[weaponIndex];
+                equipWeapon.gameObject.SetActive(false);
+            equipWeapon = weapons[weaponIndex].GetComponent<Weapon>();
             equipWeaponIndex = weaponIndex;
             weapons[weaponIndex].SetActive(true); //선택한 종류의 무기가 보이도록 함
             anim.SetTrigger("doSwap");
