@@ -8,16 +8,28 @@ public class Weapon : MonoBehaviour
     public Type type;
     public int damage;//무기의 공격력
     public float rate;//공격 속도
+    public int maxAmmo;
+    public int curAmmo;
+
     public BoxCollider meleeArea; //근접 공격의 범위
     public TrailRenderer trailEffect;//무기 휘두를 때 효과
+    public Transform bulletPos;//총알의 시작 위치
+    public GameObject bullet;//총알 프리펩을 저장할 변수
+    public Transform bulletCasePos;//탄피의 시작 위치
+    public GameObject bulletCase;//탄피 프리펩을 저장할 변수
 
-
-   public void Use()
+    public void Use()
     {
         if(type == Type.Melee)
         {
             StopCoroutine("Swing"); // 코루틴을 끝내는 함수. 이전에 진행중인 코루틴과 섞이지 않게하는,,그런거래
             StartCoroutine("Swing");//코루틴을 시작하는 함수
+        }
+        if ((type == Type.Range) &&  curAmmo >0)
+        {
+            curAmmo--;
+            //StopCoroutine("Swing"); // 코루틴을 끝내는 함수. 이전에 진행중인 코루틴과 섞이지 않게하는,,그런거래
+            StartCoroutine("Shot");//코루틴을 시작하는 함수
         }
     }
 
@@ -47,5 +59,19 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(0.3f); //입력한 시간만큼 대기.
         trailEffect.enabled = false;
     }
-    
+    IEnumerator Shot() // 열거형 함수 클래스
+    {
+        /*1. 총알 발사*/
+        GameObject instantBullet = Instantiate(bullet,bulletPos.position,bulletPos.rotation);//프리펩을 만들어 준다
+        Rigidbody bulletRigid = instantBullet.GetComponent<Rigidbody>();
+        bulletRigid.velocity = bulletPos.forward * 50;//총알이 나가야하니까 속도를 붙여줌
+        yield return null; //입력한 시간만큼 대기.
+        //2. 탄피 배출
+        GameObject instantCaseBullet = Instantiate(bulletCase, bulletCasePos.position, bulletCasePos.rotation);//프리펩을 만들어 준다
+        Rigidbody bulletCaseRigid = instantCaseBullet.GetComponent<Rigidbody>();
+        Vector3 caseVec = bulletCasePos.forward * Random.Range(-3, -2) + Vector3.up * Random.Range(2, 3);//총알이 나가야하니까 속도를 붙여줌
+        bulletCaseRigid.AddForce(caseVec, ForceMode.Impulse);
+        bulletCaseRigid.AddForce(Vector3.up * 10, ForceMode.Impulse);
+    }
+
 }
