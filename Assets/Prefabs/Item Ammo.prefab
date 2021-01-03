@@ -4934,9 +4934,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7719912693584004112}
-  - component: {fileID: 4399771359374669089}
   - component: {fileID: 4399771359374669094}
+  - component: {fileID: 4399771359374669089}
   - component: {fileID: 4399771359374669088}
+  - component: {fileID: -7486321631841225909}
   m_Layer: 0
   m_Name: Item Ammo
   m_TagString: Item
@@ -4961,19 +4962,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &4399771359374669089
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6947210472826003114}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 4
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &4399771359374669094
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4987,6 +4975,19 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1
   m_Center: {x: 0.24, y: -0.21, z: 0}
+--- !u!135 &4399771359374669089
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6947210472826003114}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 4
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4399771359374669088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5001,3 +5002,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   value: 30
+--- !u!54 &-7486321631841225909
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6947210472826003114}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

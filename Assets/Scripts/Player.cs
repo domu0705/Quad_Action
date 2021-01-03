@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
     bool isSwap; //현재 swap중인지를 확인
     bool isFireReady = true;//공격 준비 됐는지
     bool isReload;//현재 장전중인지를 확인
+    bool isBorder;//플레이어와 벽이 충돌했는지르르 확인
 
     bool sDown1; //무기 1번
     bool sDown2; //무기 2번
@@ -92,8 +93,10 @@ public class Player : MonoBehaviour
             moveVec = dodgeVec;
         }
         if (isSwap || !isFireReady || isReload) // isSwap이나 망치를 휘두르는 중(이때는 ready가 false) , 재장전 중에는 이동을 멈춤
-            moveVec = Vector3.zero;
-        transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+            moveVec = Vector3.zero; // 회전에서 moveVec사용중이라 이때는 회전도 할 수 없음.
+
+        if(!isBorder)
+            transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
 
         anim.SetBool("isRun",moveVec != Vector3.zero);
         anim.SetBool("isWalk", wDown);
@@ -230,7 +233,27 @@ public class Player : MonoBehaviour
         }
     }
 
-    
+    void FreezeRotation()//주기적으로 회전속도를 0으로 만들어 자동으로 돌아가는 것을 방지.
+    {
+        rigid.angularVelocity = Vector3.zero; //angularVelocity 는 물리 회전 속도를 의미
+
+        /*또한 floor,player,탄피를 각각 다른 레이어로 설정해주고
+         * edit>project setting> physics 의 맨 아래에서 어느 레이어가 어느 레이어에 충돌하는지를 설정해줌,
+         * 이번 실습에서는 bulletCase는 floor에만 충돌하게 체크하여, case가 player에게 충돌하여 회전이 생기게 하는 것을 막음*/
+    }
+
+    void StopToWall()
+    {
+        Debug.DrawRay(transform.position, transform.forward * 5, Color.green);//이작위치,쏘는방향*ray길이, ray색
+        isBorder = Physics.Raycast(transform.position, transform.forward, 5, LayerMask.GetMask("Wall"));//raycast 는 ray를 쏘아 닿는 오브젝트를 감지하는 함수임
+        //Wall이라는 레이어를 가진 물체와 닿으면 bool값을 true로 바꿔줌,
+    }
+    void FixedUpdate()
+    {
+        FreezeRotation();
+        StopToWall();
+    }
+
 
 
     private void OnCollisionEnter(Collision collision)
