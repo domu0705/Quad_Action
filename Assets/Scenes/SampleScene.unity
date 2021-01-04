@@ -5891,6 +5891,75 @@ TrailRenderer:
   m_MinVertexDistance: 1.5
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!1001 &482438030
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 12.034452
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.23
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -15.392843
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078027712560781628, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_Name
+      value: Item Grenade (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c898d9625350727418cd417d95ac9328, type: 3}
 --- !u!1 &497847176
 GameObject:
   m_ObjectHideFlags: 0
@@ -6304,7 +6373,7 @@ GameObject:
   - component: {fileID: 712695967}
   - component: {fileID: 712695966}
   - component: {fileID: 712695965}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Test Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6427,6 +6496,75 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 931083035}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &820753103
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 12.532461
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -8.446873
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1701643353473024902, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078027712560781628, guid: c898d9625350727418cd417d95ac9328,
+        type: 3}
+      propertyPath: m_Name
+      value: Item Grenade (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c898d9625350727418cd417d95ac9328, type: 3}
 --- !u!1 &926615723
 GameObject:
   m_ObjectHideFlags: 0
@@ -16932,6 +17070,8 @@ MonoBehaviour:
   - {fileID: 1663717424}
   - {fileID: 576856773}
   hasWeapons: 000000
+  grenadeObj: {fileID: 8441003099403977066, guid: f32f35db4216cb24da845b4f48c31073,
+    type: 3}
   grenades:
   - {fileID: 807760713}
   - {fileID: 989795927}

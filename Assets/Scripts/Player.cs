@@ -8,10 +8,12 @@ public class Player : MonoBehaviour
     public GameObject[] weapons;
     public bool[] hasWeapons; // 망치,총1,총2 를 가지고 있는지 아닌지를 알려줌
 
+    public GameObject grenadeObj;//던질 수류탄을 저장할 변수 추가
     public GameObject[] grenades;
     public int hasGrenades;
 
     public Camera followCamera;
+
     /*player가 현재 가지고 있는 각 아이템의 갯수*/
     public int ammo;
     public int coin;
@@ -37,6 +39,7 @@ public class Player : MonoBehaviour
     bool isFireReady = true;//공격 준비 됐는지
     bool isReload;//현재 장전중인지를 확인
     bool isBorder;//플레이어와 벽이 충돌했는지르르 확인
+    bool gDown;//grenade를 던질건지
 
     bool sDown1; //무기 1번
     bool sDown2; //무기 2번
@@ -65,6 +68,7 @@ public class Player : MonoBehaviour
         Move();
         Turn();
         Jump();
+        Grenade();
         Attack();
         Reload();
         Dodge();
@@ -78,10 +82,12 @@ public class Player : MonoBehaviour
         jDown = Input.GetButtonDown("Jump");
         rDown = Input.GetButtonDown("Reload");
         fDown = Input.GetButton("Fire1"); //마우스 왼쪽
+        gDown = Input.GetButtonDown("Fire2");//마우스 우클릭
         iDown = Input.GetButtonDown("interaction");
         sDown1 = Input.GetButtonDown("Swap1");
         sDown2 = Input.GetButtonDown("Swap2");
         sDown3 = Input.GetButtonDown("Swap3");
+        
 
     }
 
@@ -168,6 +174,33 @@ public class Player : MonoBehaviour
             anim.SetBool("isJump", true); // Land에니메이션 시작 안하기
             anim.SetTrigger("doJump"); // jump에니메이션
             isJump = true;
+            Debug.Log("점프함");
+        }
+    }
+
+    void Grenade()
+    {
+        if (hasGrenades == 0)
+            return;
+        if(gDown && !isReload && !isDodge && !isSwap)
+        {
+            Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);//스크린에서 월드로 ray를 쏘는 함수.마우스로부터 월드로 레이를 쏴서 바닥에 닿는대!
+            RaycastHit rayHit;
+            if (Physics.Raycast(ray, out rayHit, 100))//2번쨰 매개변수는 return처럼 반환ㄴ값을 주어진 변수에 저장하는 키워드임. 3번째 매개변수는 ray의 길이
+            {
+                Vector3 nextVec = rayHit.point - transform.position;  //rayHit.point는 ray가 바닥에 닿은 지점
+                nextVec.y = 10;//수류탄을 좀 위로 던지기 위함
+
+                GameObject instantGrenade = Instantiate(grenadeObj,transform.position, transform.rotation);
+                Rigidbody rigidGrenade = instantGrenade.GetComponent<Rigidbody>();
+                rigidGrenade.AddForce(nextVec, ForceMode.Impulse);
+                rigidGrenade.AddTorque(Vector3.back*10,ForceMode.Impulse);//회전
+
+                hasGrenades--;
+                grenades[hasGrenades].SetActive(false);
+                Debug.Log("수류탄 로직 적용됨 "+ nextVec);
+                
+            }
         }
     }
 
