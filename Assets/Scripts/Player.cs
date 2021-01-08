@@ -45,11 +45,14 @@ public class Player : MonoBehaviour
     bool sDown2; //무기 2번
     bool sDown3; //무기 3번
 
+    bool isDamage = false;//적에게 공격받고 난 뒤 무적 타임
+
     Vector3 moveVec;
     Vector3 dodgeVec;
     Animator anim;
     Rigidbody rigid;
-
+    MeshRenderer[] meshes;
+ 
     GameObject nearObject;
     Weapon equipWeapon;//현재 장착중인 무기
 
@@ -59,6 +62,7 @@ public class Player : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
+        meshes = GetComponentsInChildren<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -174,7 +178,6 @@ public class Player : MonoBehaviour
             anim.SetBool("isJump", true); // Land에니메이션 시작 안하기
             anim.SetTrigger("doJump"); // jump에니메이션
             isJump = true;
-            Debug.Log("점프함");
         }
     }
 
@@ -198,7 +201,6 @@ public class Player : MonoBehaviour
 
                 hasGrenades--;
                 grenades[hasGrenades].SetActive(false);
-                Debug.Log("수류탄 로직 적용됨 "+ nextVec);
                 
             }
         }
@@ -300,7 +302,8 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Item"){
+        if (other.tag == "Item")
+        {
             Item item = other.GetComponent<Item>();
             switch (item.type)
             {
@@ -310,7 +313,7 @@ public class Player : MonoBehaviour
                     break;
                 case Item.Type.Coin:
                     coin += item.value;
-                    if ( coin > maxCoin) coin = maxCoin ;
+                    if (coin > maxCoin) coin = maxCoin;
                     break;
                 case Item.Type.Heart:
                     health += item.value;
@@ -324,16 +327,43 @@ public class Player : MonoBehaviour
                     break;
 
             }
+
             Destroy(other.gameObject);
         }
+        else if (other.tag == "EnemyBullet")
+        {
+            if (!isDamage)
+            {    
+                Bullet enemyBullet = other.GetComponent<Bullet>();
+                health -= enemyBullet.damage;
+                if (other.GetComponent<Rigidbody>() != null)
+                    Destroy(other.gameObject);
 
+                StartCoroutine("OnDamage");
+            }           
+        }       
     }
+
+    IEnumerator OnDamage()
+    {
+        isDamage = true;
+        foreach (MeshRenderer mesh in meshes)
+        {
+            mesh.material.color = Color.yellow;
+        }
+        yield return new WaitForSeconds(1f);
+        isDamage = false;
+        foreach (MeshRenderer mesh in meshes)
+        {
+            mesh.material.color = Color.white;
+        }
+    }
+
     void OnTriggerStay(Collider other)
     {
         if(other.tag == "Weapon")
         {
             nearObject = other.gameObject;
-            Debug.Log(nearObject);
         }
     }
     void OnTriggerExit(Collider other)
