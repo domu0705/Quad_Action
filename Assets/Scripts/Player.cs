@@ -336,26 +336,35 @@ public class Player : MonoBehaviour
             {    
                 Bullet enemyBullet = other.GetComponent<Bullet>();
                 health -= enemyBullet.damage;
-                if (other.GetComponent<Rigidbody>() != null)
-                    Destroy(other.gameObject);
 
-                StartCoroutine("OnDamage");
-            }           
+                bool isBossAttack = other.name == "Boss Melee Area";//보스의 근접공격 오브젝트의 이름으로 보스의 공격을 인지
+                StartCoroutine(OnDamage(isBossAttack));
+            }
+            if (other.GetComponent<Rigidbody>() != null)
+                Destroy(other.gameObject);
         }       
     }
 
-    IEnumerator OnDamage()
+    IEnumerator OnDamage(bool isBossAttack)
     {
         isDamage = true;
         foreach (MeshRenderer mesh in meshes)
         {
             mesh.material.color = Color.yellow;
         }
+        if (isBossAttack)
+        {
+            rigid.AddForce(transform.forward * -25, ForceMode.Impulse);
+        }
         yield return new WaitForSeconds(1f);
         isDamage = false;
         foreach (MeshRenderer mesh in meshes)
         {
             mesh.material.color = Color.white;
+        }
+        if (isBossAttack)
+        {
+            rigid.velocity = Vector3.zero;
         }
     }
 

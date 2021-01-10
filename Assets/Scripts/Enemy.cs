@@ -4,35 +4,38 @@ using UnityEngine;
 using UnityEngine.AI;//navigator 쓰려면 이거 꼭 추가해주기!
 public class Enemy : MonoBehaviour
 {
-    public enum Type { A,B,C};
+    public enum Type { A,B,C, D};
     public Type enemyType;
     public int maxHealth;
     public int curHealth;
     public Transform target;
     public bool isChase;
     public bool isAttack;//지금 공격을 하고있는지아닌지
+    public bool isDead;
+
     public BoxCollider meleeArea;
     public GameObject bullet;
 
-    Rigidbody rigid;
-    BoxCollider boxCollider;
-    Material mat;
-    NavMeshAgent nav; // NavMesh: navagent가 경로를 그리기 위한 바탕(길을 그릴 스케치북 같은 거)
+    public Rigidbody rigid;
+    public BoxCollider boxCollider;
+    public MeshRenderer[] meshs;
+    public NavMeshAgent nav; // NavMesh: navagent가 경로를 그리기 위한 바탕(길을 그릴 스케치북 같은 거)
     /*
      * navMesh는 static으로 체크된 object만 bake가능.
      * 그래서 world의 wall과 floor을 static으로 체크해주어야 함
      */
-    Animator anim;
+    public Animator anim;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
         boxCollider = GetComponent<BoxCollider>();
-        mat = GetComponentInChildren<MeshRenderer>().material;
+        meshs = GetComponentsInChildren<MeshRenderer>();
         nav = GetComponent<NavMeshAgent>();
         anim = GetComponentInChildren<Animator>();
 
-        Invoke("ChaseStart", 2);
+        if(enemyType != Type.D)
+            Invoke("ChaseStart", 2);
     }
 
     void FreezeVelocity()//주기적으로 속도, 회전속도를 0으로 만들어 자동으로 돌아가거나 충돌해서 밀려나는 것을 방지.
@@ -111,20 +114,17 @@ public class Enemy : MonoBehaviour
                 yield return new WaitForSeconds(2f);
                 break;
         }
-        
         isChase = true;
         isAttack = false;
         anim.SetBool("isAttack", false);
-
-       
-
     }
 
     void FixedUpdate()
     {
         if(isChase)
             FreezeVelocity();
-        targeting();
+        if (!isDead && enemyType != Type.D)
+            targeting();
     }
 
 
@@ -135,7 +135,7 @@ public class Enemy : MonoBehaviour
     }
     private void Update()
     {
-        if (nav.enabled)
+        if (nav.enabled && (enemyType != Type.D))
         {
             nav.SetDestination(target.position);//도착할 목표 위치 지정 함수
             nav.isStopped = !isChase;   //isStipped로 enemy가 완벽하게 멈추도록 작성.
@@ -170,17 +170,28 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator OnDamage(Vector3 reactVec, bool isGrenade)
     {
-        mat.color = Color.red;
+        foreach(MeshRenderer mesh in meshs)
+        {
+            mesh.material.color = Color.red;
+        }
+        
         yield return new WaitForSeconds(0.1f);
 
         if(curHealth > 0)
         {
-            mat.color = Color.white;
+            foreach (MeshRenderer mesh in meshs)
+            {
+                mesh.material.color = Color.white;
+            }
         }
         else//적의 체력이 다 닳아서 죽었다면
         {
-            mat.color = Color.gray;
+            foreach (MeshRenderer mesh in meshs)
+            {
+                mesh.material.color = Color.gray;
+            }
             gameObject.layer = 14;
+            isDead = true;
             isChase = false;
             nav.enabled = false;//적이 플레이어를 따라가는걸 활성화 해놓으면 y축(위방향)으로 움직이는 모션을 할 수가 없기때문에 꺼둠,
             anim.SetTrigger("doDie");
@@ -193,16 +204,15 @@ public class Enemy : MonoBehaviour
                 rigid.freezeRotation = false;
                 rigid.AddForce(reactVec * 5, ForceMode.Impulse);
                 rigid.AddTorque(reactVec * 15, ForceMode.Impulse);
-                Destroy(gameObject, 4);
             }
             else
             {
                 reactVec = reactVec.normalized;
                 reactVec += Vector3.up;
                 rigid.AddForce(reactVec*5,ForceMode.Impulse);
-                Destroy(gameObject, 4);
             }
-            
+            if(enemyType !=Type.D)
+                Destroy(gameObject, 4);
         }
     }
 }
