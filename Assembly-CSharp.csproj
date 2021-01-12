@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Orbit.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\PlayerFollow.cs" />
+    <Compile Include="Assets\Scripts\Shop.cs" />
     <Compile Include="Assets\Scripts\Weapon.cs" />
     <None Include="Assets\QuadAcion Pack\License.txt" />
     <Reference Include="UnityEngine">

@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
     bool isReload;//현재 장전중인지를 확인
     bool isBorder;//플레이어와 벽이 충돌했는지르르 확인
     bool gDown;//grenade를 던질건지
-
+    bool isShop; //쇼핑중인지 확인
     bool sDown1; //무기 1번
     bool sDown2; //무기 2번
     bool sDown3; //무기 3번
@@ -102,11 +102,14 @@ public class Player : MonoBehaviour
         {
             moveVec = dodgeVec;
         }
-        if (isSwap || !isFireReady || isReload) // isSwap이나 망치를 휘두르는 중(이때는 ready가 false) , 재장전 중에는 이동을 멈춤
+        if (isSwap || !isFireReady || isReload)
+        { // isSwap이나 망치를 휘두르는 중(이때는 ready가 false) , 재장전 중에는 이동을 멈춤
             moveVec = Vector3.zero; // 회전에서 moveVec사용중이라 이때는 회전도 할 수 없음.
-
-        if(!isBorder)
+        }
+        if (!isBorder)
+        {
             transform.position += moveVec * speed * (wDown ? 0.3f : 1f) * Time.deltaTime;
+        }
 
         anim.SetBool("isRun",moveVec != Vector3.zero);
         anim.SetBool("isWalk", wDown);
@@ -119,7 +122,7 @@ public class Player : MonoBehaviour
             return;
         fireDelay += Time.deltaTime;
         isFireReady = equipWeapon.rate < fireDelay; // 공격을 이미 해서 공격 모션이 이루어지는 동안은 기다려야 함.
-        if(fDown && isFireReady && !isDodge && !isSwap)//공격!
+        if(fDown && isFireReady && !isDodge && !isSwap && !isShop)//공격!
         {
             equipWeapon.Use();
             anim.SetTrigger(equipWeapon.type == Weapon.Type.Melee? "doSwing" : "doShot");
@@ -135,7 +138,7 @@ public class Player : MonoBehaviour
             return;
         if (ammo == 0)//총알이 없다면
             return;
-        if(rDown && !isJump && !isDodge && !isSwap && isFireReady){//총을 쏠 수 있는 상태
+        if(rDown && !isJump && !isDodge && !isSwap && isFireReady && !isShop){//총을 쏠 수 있는 상태
             anim.SetTrigger("doReload");//에니메이션 안에 있는 do Reload를 활성화!
             isReload = true;
             Invoke("ReloadOut", 2f);
@@ -265,6 +268,13 @@ public class Player : MonoBehaviour
                 hasWeapons[weaponIndex] = true; // 아이템 먹기!
                 Destroy(nearObject);
             }
+            else if (nearObject.tag == "Shop")
+            {
+                Shop shop = nearObject.GetComponent<Shop>();//item 스크립트 가져오기
+                shop.Enter(this);
+                isShop = true;
+
+            }
         }
     }
 
@@ -370,7 +380,7 @@ public class Player : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        if(other.tag == "Weapon")
+        if(other.tag == "Weapon" || other.tag == "Shop")
         {
             nearObject = other.gameObject;
         }
@@ -379,6 +389,13 @@ public class Player : MonoBehaviour
     {
         if (other.tag == "Weapon")
         {
+            nearObject = null;
+        }
+        else if (other.tag == "Shop")
+        {
+            Shop shop = nearObject.GetComponent<Shop>();
+            shop.Exit();
+            isShop = false;
             nearObject = null;
         }
     }
