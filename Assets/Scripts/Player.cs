@@ -24,6 +24,9 @@ public class Player : MonoBehaviour
     public int maxCoin;
     public int maxHealth;
     public int maxHasGrenades;
+    public int score;
+
+    public Weapon equipWeapon;//현재 장착중인 무기
 
     float hAxis;
     float vAxis;
@@ -54,7 +57,7 @@ public class Player : MonoBehaviour
     MeshRenderer[] meshes;
  
     GameObject nearObject;
-    Weapon equipWeapon;//현재 장착중인 무기
+    
 
     int equipWeaponIndex = -1; // 현재 들고있는 무기 (이건 숫자로)
     float fireDelay; //공격 딜레이
@@ -63,6 +66,8 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         meshes = GetComponentsInChildren<MeshRenderer>();
+
+        PlayerPrefs.SetInt("MaxScore", 112500); //유니티에서 제공하는 간단한 저장기능
     }
 
     // Update is called once per frame
@@ -330,9 +335,10 @@ public class Player : MonoBehaviour
                     if (health > maxHealth) health = maxHealth;
                     break;
                 case Item.Type.Grenade:
-                    grenades[hasGrenades].SetActive(true);
                     hasGrenades += item.value;
-                    if (hasGrenades > maxHasGrenades) hasGrenades = maxHasGrenades;
+                    if (hasGrenades > maxHasGrenades) 
+                        hasGrenades = maxHasGrenades;
+                    grenades[hasGrenades-1].SetActive(true);
 
                     break;
 
