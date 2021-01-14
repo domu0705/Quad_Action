@@ -8,7 +8,9 @@ public class Grenade : MonoBehaviour
     public GameObject meshObj;
     public GameObject effectObj;
     public Rigidbody rigid;
-     
+
+
+    public AudioSource grenadeBombSound;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,6 +21,7 @@ public class Grenade : MonoBehaviour
     IEnumerator Explosion()
     {
         yield return new WaitForSeconds(2.5f);
+        grenadeBombSound.Play();
         rigid.velocity = Vector3.zero;//속도 없애기
         rigid.angularVelocity = Vector3.zero;//회전 없애기
         meshObj.SetActive(false);

@@ -8,6 +8,9 @@ public class Enemy : MonoBehaviour
     public Type enemyType;
     public int maxHealth;
     public int curHealth;
+    public int score;
+
+    public GameManager manager;
     public Transform target;
     public bool isChase;
     public bool isAttack;//지금 공격을 하고있는지아닌지
@@ -15,7 +18,7 @@ public class Enemy : MonoBehaviour
 
     public BoxCollider meleeArea;
     public GameObject bullet;
-
+    public GameObject[] coins;
     public Rigidbody rigid;
     public BoxCollider boxCollider;
     public MeshRenderer[] meshs;
@@ -77,7 +80,6 @@ public class Enemy : MonoBehaviour
 
     IEnumerator Attack()
     {
-        Debug.Log("attack에 들어왔어");
         isChase = false;
         isAttack = true;
         anim.SetBool("isAttack", true);
@@ -184,7 +186,7 @@ public class Enemy : MonoBehaviour
                 mesh.material.color = Color.white;
             }
         }
-        else//적의 체력이 다 닳아서 죽었다면
+        else if(!isDead)//적의 체력이 다 닳아서 죽었다면, (죽었는데 또 총맞아서 여기 여러번 들어가는 것 막기위해 조건 추가함)
         {
             foreach (MeshRenderer mesh in meshs)
             {
@@ -195,7 +197,33 @@ public class Enemy : MonoBehaviour
             isChase = false;
             nav.enabled = false;//적이 플레이어를 따라가는걸 활성화 해놓으면 y축(위방향)으로 움직이는 모션을 할 수가 없기때문에 꺼둠,
             anim.SetTrigger("doDie");
+            Player player = target.GetComponent<Player>();
+            player.score += score;
 
+            /*몬스터 죽이면 동전 생성*/
+            int ranCoin = Random.Range(0, 3);
+            Instantiate(coins[ranCoin], transform.position, Quaternion.identity); // Quaternion.identity : 회전 없음"을 의미합니다. 오브젝트는 완벽하게 월드 좌표 축 또는 부모의 축으로 정렬됩니다
+
+            switch (enemyType)
+            {
+                case Type.A:
+                    if(manager.enemyCntA > 0)
+                        manager.enemyCntA--;
+                    break;
+                case Type.B:
+                    if (manager.enemyCntB > 0)
+                        manager.enemyCntB--;
+                    break;
+                case Type.C:
+                    if (manager.enemyCntC > 0)
+                        manager.enemyCntC--;
+                    break;
+                case Type.D:
+                    if (manager.enemyCntD > 0)
+                        manager.enemyCntD--;
+                    break;
+
+            }
             if (isGrenade)
             {
                 reactVec = reactVec.normalized;
@@ -211,8 +239,7 @@ public class Enemy : MonoBehaviour
                 reactVec += Vector3.up;
                 rigid.AddForce(reactVec*5,ForceMode.Impulse);
             }
-            if(enemyType !=Type.D)
-                Destroy(gameObject, 4);
+            Destroy(gameObject, 3);
         }
     }
 }

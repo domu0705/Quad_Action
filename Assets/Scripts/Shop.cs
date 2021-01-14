@@ -42,7 +42,7 @@ public class Shop : MonoBehaviour
 
     }
 
-    IEnumerator Talk()//온이 모라=자랄 때
+    IEnumerator Talk()//돈이 모라=자랄 때
     {
         talkText.text = talkData[1];
         yield return new WaitForSeconds(2f);

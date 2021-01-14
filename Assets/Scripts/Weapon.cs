@@ -18,6 +18,9 @@ public class Weapon : MonoBehaviour
     public Transform bulletCasePos;//탄피의 시작 위치
     public GameObject bulletCase;//탄피 프리펩을 저장할 변수
 
+    /*효과음들*/
+    public AudioSource gunSound;
+    public AudioSource hammerSound;
     public void Use()
     {
         if(type == Type.Melee)
@@ -51,6 +54,7 @@ public class Weapon : MonoBehaviour
       */
     IEnumerator Swing() // 열거형 함수 클래스
     {
+        hammerSound.Play();
         yield return new WaitForSeconds(0.1f); //입력한 시간만큼 대기.
         meleeArea.enabled = true;
         trailEffect.enabled = true;
@@ -65,6 +69,7 @@ public class Weapon : MonoBehaviour
         GameObject instantBullet = Instantiate(bullet,bulletPos.position,bulletPos.rotation);//프리펩을 만들어 준다
         Rigidbody bulletRigid = instantBullet.GetComponent<Rigidbody>();
         bulletRigid.velocity = bulletPos.forward * 50;//총알이 나가야하니까 속도를 붙여줌
+        gunSound.Play();
         yield return null; //입력한 시간만큼 대기.
         //2. 탄피 배출
         GameObject instantCaseBullet = Instantiate(bulletCase, bulletCasePos.position, bulletCasePos.rotation);//프리펩을 만들어 준다

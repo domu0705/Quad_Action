@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameManager manager;
+    public Camera followCamera;
     public float speed;
     public GameObject[] weapons;
     public bool[] hasWeapons; // 망치,총1,총2 를 가지고 있는지 아닌지를 알려줌
 
+    /*효과음들*/
+    public AudioSource jumpSound;
+    public AudioSource grenadeRollSound;
+    public AudioSource getItemSound;
+    public AudioSource getHeartSound;
+
+    /*수류탄*/
     public GameObject grenadeObj;//던질 수류탄을 저장할 변수 추가
     public GameObject[] grenades;
     public int hasGrenades;
-
-    public Camera followCamera;
 
     /*player가 현재 가지고 있는 각 아이템의 갯수*/
     public int ammo;
@@ -47,7 +54,7 @@ public class Player : MonoBehaviour
     bool sDown1; //무기 1번
     bool sDown2; //무기 2번
     bool sDown3; //무기 3번
-
+    bool isDead;//플레이어가 죽었는지
     bool isDamage = false;//적에게 공격받고 난 뒤 무적 타임
 
     Vector3 moveVec;
@@ -66,23 +73,25 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
         meshes = GetComponentsInChildren<MeshRenderer>();
-
-        PlayerPrefs.SetInt("MaxScore", 112500); //유니티에서 제공하는 간단한 저장기능
     }
 
     // Update is called once per frame
     void Update()
     {
         GetInput();
-        Move();
-        Turn();
-        Jump();
-        Grenade();
-        Attack();
-        Reload();
-        Dodge();
-        Interaction();
-        Swap();
+        if (!isDead)
+        {
+            Move();
+            Turn();
+            Jump();
+            Grenade();
+            Attack();
+            Reload();
+            Dodge();
+            Interaction();
+            Swap();
+        }
+        
     }
     void GetInput(){
         hAxis = Input.GetAxisRaw("Horizontal"); // Axis 값을 정수로 변환하는 함수
@@ -186,6 +195,7 @@ public class Player : MonoBehaviour
             anim.SetBool("isJump", true); // Land에니메이션 시작 안하기
             anim.SetTrigger("doJump"); // jump에니메이션
             isJump = true;
+            jumpSound.Play();
         }
     }
 
@@ -195,6 +205,7 @@ public class Player : MonoBehaviour
             return;
         if(gDown && !isReload && !isDodge && !isSwap)
         {
+
             Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);//스크린에서 월드로 ray를 쏘는 함수.마우스로부터 월드로 레이를 쏴서 바닥에 닿는대!
             RaycastHit rayHit;
             if (Physics.Raycast(ray, out rayHit, 100))//2번쨰 매개변수는 return처럼 반환ㄴ값을 주어진 변수에 저장하는 키워드임. 3번째 매개변수는 ray의 길이
@@ -206,7 +217,7 @@ public class Player : MonoBehaviour
                 Rigidbody rigidGrenade = instantGrenade.GetComponent<Rigidbody>();
                 rigidGrenade.AddForce(nextVec, ForceMode.Impulse);
                 rigidGrenade.AddTorque(Vector3.back*10,ForceMode.Impulse);//회전
-
+                grenadeRollSound.Play();
                 hasGrenades--;
                 grenades[hasGrenades].SetActive(false);
                 
@@ -317,7 +328,7 @@ public class Player : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Item")
+        if ((other.tag == "Item") && (!isDead))
         {
             Item item = other.GetComponent<Item>();
             switch (item.type)
@@ -325,28 +336,31 @@ public class Player : MonoBehaviour
                 case Item.Type.Ammo:
                     ammo += item.value;
                     if (ammo > maxAmmo) ammo = maxAmmo;
+                    getItemSound.Play();
                     break;
                 case Item.Type.Coin:
                     coin += item.value;
                     if (coin > maxCoin) coin = maxCoin;
+                    getItemSound.Play();
                     break;
                 case Item.Type.Heart:
                     health += item.value;
                     if (health > maxHealth) health = maxHealth;
+                    getHeartSound.Play();
                     break;
                 case Item.Type.Grenade:
                     hasGrenades += item.value;
                     if (hasGrenades > maxHasGrenades) 
                         hasGrenades = maxHasGrenades;
                     grenades[hasGrenades-1].SetActive(true);
-
+                    getItemSound.Play();
                     break;
 
             }
 
             Destroy(other.gameObject);
         }
-        else if (other.tag == "EnemyBullet")
+        else if ((other.tag == "EnemyBullet") && (!isDead))
         {
             if (!isDamage)
             {    
@@ -368,9 +382,13 @@ public class Player : MonoBehaviour
         {
             mesh.material.color = Color.yellow;
         }
-        if (isBossAttack)
+        if (isBossAttack)// 보스랑 부딛히면 밀려나는 효과 주기
         {
             rigid.AddForce(transform.forward * -25, ForceMode.Impulse);
+        }
+        if(health <= 0 && !isDead)
+        {
+            OnDie();
         }
         yield return new WaitForSeconds(1f);
         isDamage = false;
@@ -378,10 +396,18 @@ public class Player : MonoBehaviour
         {
             mesh.material.color = Color.white;
         }
-        if (isBossAttack)
+        if (isBossAttack)//밀려나는 효과때문에 받았던 힘 다시 없애주기.
         {
             rigid.velocity = Vector3.zero;
         }
+        
+    }
+
+    void OnDie()
+    {
+        anim.SetTrigger("doDie");
+        isDead = true;
+        manager.GameOver();
     }
 
     void OnTriggerStay(Collider other)
